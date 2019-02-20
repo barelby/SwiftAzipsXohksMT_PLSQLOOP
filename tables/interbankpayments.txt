@@ -1,0 +1,179 @@
+-- Create table
+create table INTERBANKPAYMENTS
+(
+  id                           NUMBER not null,
+  reference                    VARCHAR2(40 CHAR) not null,
+  state                        NUMBER not null,
+  payment_date                 DATE not null,
+  system_id                    NUMBER,
+  message_type                 NUMBER not null,
+  amount                       NUMBER(30,2),
+  currency                     NUMBER default 0 not null,
+  fee_collection               IBS.T_FEE_AMOUNT_COLLECTION,
+  ground                       VARCHAR2(2000 CHAR),
+  operation_id                 NUMBER,
+  payer_branch_id              NUMBER,
+  payer_account                VARCHAR2(35 CHAR),
+  receiver_name                VARCHAR2(100 CHAR),
+  receiver_iban                VARCHAR2(35 CHAR),
+  receiver_tax                 VARCHAR2(2000 CHAR),
+  emitent_bank_code            VARCHAR2(30 CHAR),
+  emitent_bank_corr_account    VARCHAR2(50 CHAR),
+  beneficiar_bank_name         VARCHAR2(100 CHAR),
+  beneficiar_bank_code         VARCHAR2(100 CHAR),
+  beneficiar_bank_swift        VARCHAR2(100 CHAR),
+  beneficiar_bank_tax          VARCHAR2(30 CHAR),
+  beneficiar_bank_corr_account VARCHAR2(100 CHAR),
+  context_id                   NUMBER,
+  creator_id                   NUMBER,
+  state_history                T_INTBANKPAYS_STATE_COLLECTION,
+  attrs                        T_INTBANKPAYS_ATTR_COLLECTION,
+  changes                      T_INTBANKPAYS_CHANGES_COL,
+  creation_date                TIMESTAMP(6) not null
+)
+nested table FEE_COLLECTION store as NESTED_FEE_COLLECTION
+nested table STATE_HISTORY store as NESTED_STATE_HISTORY
+nested table ATTRS store as NESTED_PAYMENT_ATTRS
+nested table CHANGES store as NESTED_PAYMENT_CHANGES
+tablespace DATA
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column INTERBANKPAYMENTS.id
+  is '\';
+comment on column INTERBANKPAYMENTS.reference
+  is 'Реферанльный номер';
+comment on column INTERBANKPAYMENTS.state
+  is 'Статус платежа';
+comment on column INTERBANKPAYMENTS.payment_date
+  is 'Дата платежа. Дата будет использована при отправки в Нац Банк';
+comment on column INTERBANKPAYMENTS.system_id
+  is 'Идентификатор платежной системы';
+comment on column INTERBANKPAYMENTS.message_type
+  is 'Тип сообщения';
+comment on column INTERBANKPAYMENTS.amount
+  is 'Сумма платежа';
+comment on column INTERBANKPAYMENTS.currency
+  is 'Идентификатор валюты';
+comment on column INTERBANKPAYMENTS.fee_collection
+  is 'Коллекция комиссий';
+comment on column INTERBANKPAYMENTS.ground
+  is 'Основание платежа';
+comment on column INTERBANKPAYMENTS.operation_id
+  is 'Операция, связанная с платежом';
+comment on column INTERBANKPAYMENTS.state_history
+  is 'История статуса платежа';
+comment on column INTERBANKPAYMENTS.attrs
+  is 'Дополнительные аттрибуты платежа';
+comment on column INTERBANKPAYMENTS.changes
+  is 'Таймлайн изменений платежа';
+comment on column INTERBANKPAYMENTS.creation_date
+  is 'Дата и время создания платежа';
+-- Create/Recreate indexes 
+create unique index SYS_C001658946 on INTERBANKPAYMENTS (CHANGES)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create unique index SYS_C001658947 on INTERBANKPAYMENTS (ATTRS)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create unique index SYS_C001658948 on INTERBANKPAYMENTS (STATE_HISTORY)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create unique index SYS_C001658949 on INTERBANKPAYMENTS (FEE_COLLECTION)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create index SYS_C001658950 on INTERBANKPAYMENTS (PAYER_BRANCH_ID)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create index SYS_C001658951 on INTERBANKPAYMENTS (CREATOR_ID)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+create unique index SYS_C001658952 on INTERBANKPAYMENTS (REFERENCE)
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table INTERBANKPAYMENTS
+  add constraint PK_INTERBANKPAYM_ID primary key (ID)
+  using index 
+  tablespace DATA
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    next 1M
+    minextents 1
+    maxextents unlimited
+  );

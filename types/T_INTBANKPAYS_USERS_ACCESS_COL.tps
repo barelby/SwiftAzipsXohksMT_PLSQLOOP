@@ -1,0 +1,2 @@
+create or replace type T_INTBANKPAYS_USERS_ACCESS_COL as table of T_INTBANKPAYS_USERS_ACCESS
+/
